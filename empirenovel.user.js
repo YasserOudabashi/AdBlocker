@@ -47,6 +47,12 @@
   };
   ['touchstart', 'pointerdown', 'mousedown', 'click'].forEach(n => window.addEventListener(n, stop, true));
 
+  // 3b. "Click anywhere" (SDK .cfd, chiave ca_<zona>): un tocco qualsiasi fa partire il redirect.
+  //     I tocchi su zone NON interattive si fermano qui, prima dei listener dell'SDK (senza preventDefault: lo scroll resta).
+  const UI = 'a[href],button,input,select,textarea,label,summary,[role=button],[onclick],[contenteditable]';
+  const tap = e => { if (e.target instanceof Element && !e.target.closest(UI)) e.stopImmediatePropagation(); };
+  ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click'].forEach(n => window.addEventListener(n, tap, true));
+
   // 4. Script/iframe creati dinamicamente da domini pubblicitari: src ignorato
   const sd = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
   Object.defineProperty(HTMLScriptElement.prototype, 'src', {
